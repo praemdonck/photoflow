@@ -11,7 +11,7 @@ rules = { "-1" : { "operations" : ["resize", "delete"],      "folder" : "Rejecte
            "1" : { "operations" : ["resize", "delete"],      "folder" : "1_star",    "max_size" : "1800", "jpg_qual" : "85" },
            "2" : { "operations" : ["resize", "delete"],      "folder" : "2_star",    "max_size" : "2560", "jpg_qual" : "85" },
            "3" : { "operations" : ["resize", "delete"],      "folder" : "3_star",    "max_size" : "4000", "jpg_qual" : "85" },
-           "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star",    "max_size" : "4000", "jpg_qual" : "85" },
+           "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star",    "max_size" : "6000", "jpg_qual" : "85" },
            "5" : { "operations" : ["move"],                  "folder" : "5_star"                                             }
 } 
 
@@ -66,6 +66,7 @@ def process_image(img, rating):
 
     command.append(img)
     command.append(dest)
+    #print "Rating " + str(rating) + " " + command
     print command
     subprocess.call(command)
 
@@ -118,6 +119,6 @@ for p in images:
     a = '0'
 #  print call(["exiv2", "-V"])
 #print call(["echo", "hello world"])
-  print(p + " Rating: " + a)
+#print(p + " Rating: " + a)
   process_image(p, a)
 #print a
