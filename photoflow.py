@@ -6,14 +6,23 @@ import subprocess
 
 #select input images from current directory
 image_extensions = [".jpg", ".png", ".bmp"]
-rules = { "-1" : { "operations" : ["resize", "delete"],      "folder" : "Rejected",  "max_size" : "1000", "jpg_qual" : "70" },
-           "0" : { "operations" : ["none"] },
-           "1" : { "operations" : ["resize", "delete"],      "folder" : "1_star",    "max_size" : "1800", "jpg_qual" : "85" },
-           "2" : { "operations" : ["resize", "delete"],      "folder" : "2_star",    "max_size" : "2560", "jpg_qual" : "85" },
-           "3" : { "operations" : ["resize", "delete"],      "folder" : "3_star",    "max_size" : "4000", "jpg_qual" : "85" },
-           "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star",    "max_size" : "6000", "jpg_qual" : "85" },
-           "5" : { "operations" : ["move"],                  "folder" : "5_star"                                             }
-} 
+rules_nikon_d7200 = { "-1" : { "operations" : ["resize", "delete"],      "folder" : "Rejected",  "max_size" : "1000", "jpg_qual" : "70" },
+                       "0" : { "operations" : ["none"] },
+                       "1" : { "operations" : ["resize", "delete"],      "folder" : "1_star",    "max_size" : "1800", "jpg_qual" : "85" },
+                       "2" : { "operations" : ["resize", "delete"],      "folder" : "2_star",    "max_size" : "2560", "jpg_qual" : "85" },
+                       "3" : { "operations" : ["resize", "delete"],      "folder" : "3_star",    "max_size" : "4000", "jpg_qual" : "85" },
+                       "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star",    "max_size" : "6000", "jpg_qual" : "85" },
+                       "5" : { "operations" : ["move"],                  "folder" : "5_star"                                            }
+                    } 
+
+rules_nikon_d80   = { "-1" : { "operations" : ["resize", "delete"],      "folder" : "Rejected",  "max_size" : "1000", "jpg_qual" : "70" },
+                       "0" : { "operations" : ["none"] },
+                       "1" : { "operations" : ["resize", "delete"],      "folder" : "1_star",    "max_size" : "1800", "jpg_qual" : "85" },
+                       "2" : { "operations" : ["resize", "delete"],      "folder" : "2_star",    "max_size" : "2560", "jpg_qual" : "85" },
+                       "3" : { "operations" : ["change_qual", "delete"], "folder" : "3_star"                        , "jpg_qual" : "85" },
+                       "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star"                        , "jpg_qual" : "85" },
+                       "5" : { "operations" : ["move"],                  "folder" : "5_star"                                            }
+                    } 
 
 def file_exists(filename):
 	return os.path.exists(filename)
@@ -27,7 +36,7 @@ def make_dir(path):
     pass
 
 
-def process_image(img, rating):
+def process_image(img, rating, rules):
   if not file_exists(img):
     print "Cannot find file: " + str(img)
     return
@@ -113,12 +122,22 @@ for p in images:
 #print call(["exiv2", "-K", "Xmp.xmp.Rating", "-PX", "/home/pablo/src/photoflow/test/DSC_0530.JPG"])
   try:
     a = subprocess.check_output(["exiv2", "-K", "Xmp.xmp.Rating", "-PX", p])
-    a = a.split()[3]
+    rating = a.split()[3]
+    a = subprocess.check_output(["exiv2", "-K", "Exif.Image.Model", "-PE", p])
+    a = a.split()
+    camera = a[3] + " " + a[4]
   except:
     print "Failed to get rating for image " + str(p)
-    a = '0'
+    rating = '0'
 #  print call(["exiv2", "-V"])
 #print call(["echo", "hello world"])
-#print(p + " Rating: " + a)
-  process_image(p, a)
-#print a
+  print(p + " Rating: " + rating)
+  if rating == "18446744073709551615": rating = "-1"
+  if camera == "NIKON D80":
+    rules = rules_nikon_d80
+    process_image(p, rating, rules)
+  elif camera == "NIKON D7200":
+    rules = rules_nikon_d7200
+    process_image(p, rating, rules)
+  else:
+    print "No rules for camera: " + camera
