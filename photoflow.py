@@ -24,6 +24,15 @@ rules_nikon_d80   = { "-1" : { "operations" : ["resize", "delete"],      "folder
                        "5" : { "operations" : ["move"],                  "folder" : "5_star"                                            }
                     } 
 
+rules_default     = { "-1" : { "operations" : ["resize", "delete"],      "folder" : "Rejected",  "max_size" : "1000", "jpg_qual" : "70" },
+                       "0" : { "operations" : ["none"] },
+                       "1" : { "operations" : ["change_qual", "delete"], "folder" : "1_star"                        , "jpg_qual" : "85" },
+                       "2" : { "operations" : ["change_qual", "delete"], "folder" : "2_star"                        , "jpg_qual" : "85" },
+                       "3" : { "operations" : ["change_qual", "delete"], "folder" : "3_star"                        , "jpg_qual" : "85" },
+                       "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star"                        , "jpg_qual" : "85" },
+                       "5" : { "operations" : ["move"],                  "folder" : "5_star"                                            }
+                    } 
+
 def file_exists(filename):
 	return os.path.exists(filename)
  
@@ -129,15 +138,18 @@ for p in images:
   except:
     print "Failed to get rating for image " + str(p)
     rating = '0'
+    camera=""
 #  print call(["exiv2", "-V"])
 #print call(["echo", "hello world"])
   print(p + " Rating: " + rating)
   if rating == "18446744073709551615": rating = "-1"
-  if camera == "NIKON D80":
+  if camera == "NIKON D80" or camera == "Canon EOS":
     rules = rules_nikon_d80
     process_image(p, rating, rules)
   elif camera == "NIKON D7200":
     rules = rules_nikon_d7200
     process_image(p, rating, rules)
   else:
-    print "No rules for camera: " + camera
+    print "Camera: " + camera + " using default Rules"
+    rules = rules_default
+    process_image(p, rating, rules)
