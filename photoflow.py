@@ -3,6 +3,9 @@
 #from __future__ import print_function
 import os
 import subprocess 
+from gi.repository import GExiv2
+
+exif = None
 
 #select input images from current directory
 image_extensions = [".jpg", ".png", ".bmp"]
@@ -72,7 +75,8 @@ def process_image(img, rating, rules):
   if ("resize" in rules[rating]["operations"] or 
       "change_qual" in rules[rating]["operations"]):
     command = ["convert"]
-    if "max_size" in rules[rating] and "resize" in rules[rating]["operations"]:
+# Check if we need to downsize the picture, note we only downsize, no upsizing
+    if "max_size" in rules[rating] and "resize" in rules[rating]["operations"] and max(exif.get_pixel_width(), exif.get_pixel_height()) > int(rules[rating]["max_size"]):    
       command.append("-size")
       command.append(rules[rating]["max_size"]) 
       command.append("-resize")
@@ -132,9 +136,13 @@ for p in images:
   try:
     a = subprocess.check_output(["exiv2", "-K", "Xmp.xmp.Rating", "-PX", p])
     rating = a.split()[3]
-    a = subprocess.check_output(["exiv2", "-K", "Exif.Image.Model", "-PE", p])
-    a = a.split()
-    camera = a[3] + " " + a[4]
+#a = subprocess.check_output(["exiv2", "-K", "Exif.Image.Model", "-PE", p])
+#a = a.split()
+#camera = a[3] + " " + a[4]  
+
+    exif = GExiv2.Metadata(p)
+    camera = exif.get('Exif.Image.Model') 
+    print camera
   except:
     print "Failed to get rating for image " + str(p)
     rating = '0'
