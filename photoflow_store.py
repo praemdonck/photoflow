@@ -30,17 +30,21 @@ def get_images(dir):
   return allImages
 
 
-#negatives_base_dir         = "/media/pablo/Media/Fotos/Negatives"
 negatives_base_dir         = "/home/pablo/Pictures/Negatives"
-#negatives_links_base_dir   = "/media/pablo/Media/Fotos/Negatives_links"
 negatives_links_base_dir   = "/home/pablo/Pictures/Negatives_links"
+favorites_base_dir         = "/home/pablo/Pictures/Favorites"
 dropbox_negatives_base_dir = "/home/pablo/Dropbox/Photos/Negatives"
-favorites_base_dir = "/home/pablo/Pictures/Favorites"
 
 base_dir = os.getcwd()
 base_name = os.path.basename(base_dir)
+
+if base_name[0] == '3':
+    dropbox_negatives_base_dir = "/home/pablo/Dropbox/Photos/Negatives/Various"
+    favorites_base_dir         = "/home/pablo/Pictures/Favorites/Various"
+
 negatives_target_dir = os.path.join(negatives_base_dir, base_name)
 favorites_target_dir = os.path.join(favorites_base_dir, base_name)
+
 
 #Move files to negative folder
 command = ["mv"]

@@ -33,7 +33,7 @@ rules_default     = { "-1" : { "operations" : ["resize", "delete"],      "folder
                        "2" : { "operations" : ["resize", "delete"],      "folder" : "2_star",    "max_size" : "2560", "jpg_qual" : "85" },
                        "3" : { "operations" : ["resize", "delete"],      "folder" : "3_star",    "max_size" : "4000", "jpg_qual" : "85" },
                        "4" : { "operations" : ["change_qual", "delete"], "folder" : "4_star",    "max_size" : "6000", "jpg_qual" : "85" },
-                       "5" : { "operations" : ["move"],                  "folder" : "5_star"                                                                   }
+                       "5" : { "operations" : ["move"],                  "folder" : "5_star"                                            }
                     } 
 
 def file_exists(filename):
@@ -129,17 +129,7 @@ base_dir = os.getcwd()
 images = get_images(base_dir)
 
 for p in images:
- #a = call(["exiv2", "-K Xmp.xmp.Rating", "-PX", p])
-#temp = base_dir + "/" + p
-#print call(["exiv2", "-K Xmp.xmp.Rating", "-PX", temp])
-#print call(["exiv2", "-K", "Xmp.xmp.Rating", "-PX", "/home/pablo/src/photoflow/test/DSC_0530.JPG"])
   try:
-#a = subprocess.check_output(["exiv2", "-K", "Xmp.xmp.Rating", "-PX", p])
-#rating = a.split()[3]
-#a = subprocess.check_output(["exiv2", "-K", "Exif.Image.Model", "-PE", p])
-#a = a.split()
-#camera = a[3] + " " + a[4]  
-
     exif = GExiv2.Metadata(p)
     camera = exif.get('Exif.Image.Model') 
     rating = exif.get('Xmp.xmp.Rating') 
@@ -150,8 +140,6 @@ for p in images:
     print "Failed to get rating for image " + str(p)
     rating = '0'
     camera=""
-#  print call(["exiv2", "-V"])
-#print call(["echo", "hello world"])
   print(p + " Rating: " + rating)
   if rating == "18446744073709551615": rating = "-1"
   if camera == "NIKON D80" or camera == "Canon EOS":
